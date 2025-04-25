@@ -1,6 +1,7 @@
 package com.example.kiosk.level6;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -48,6 +49,26 @@ public class Kiosk {
         }
     }
 
+    // 안전하게 choice(정수) 받기
+    private int getValidInput() {
+        int choice = -1;
+        boolean validInput = false;
+
+        while (!validInput) {
+            try {
+                choice = scanner.nextInt();
+                validInput = true;
+            } catch (InputMismatchException e) {
+                System.out.println("숫자만 입력해주세요.");
+                scanner.nextLine();
+                System.out.print("다시 입력해주세요: ");
+            }
+        }
+
+        scanner.nextLine();
+        return choice;
+    }
+
     // 카테고리 메뉴 출력
     private boolean homeMenu() {
         System.out.println("[ MAIN MENU ]");
@@ -64,7 +85,7 @@ public class Kiosk {
 
         // 사용자 입력받기
         System.out.print("메뉴를 선택하세요: ");
-        int choice = scanner.nextInt();
+        int choice = getValidInput();
         if (choice == 0) {
             return false;
         } else if (choice >= 1 && choice <= menus.size()) {
@@ -95,7 +116,7 @@ public class Kiosk {
         System.out.print("메뉴를 선택하세요: ");
 
         // 사용자 입력받기
-        int choice = scanner.nextInt();
+        int choice = getValidInput();
         if (choice == 0) {
             // 뒤로 가기
         } else if (choice >= 1 && choice <= menuItems.size()) {
@@ -114,13 +135,16 @@ public class Kiosk {
         System.out.println("위 메뉴를 장바구니에 추가 하시겠습니까?");
         System.out.println("1. 확인      2. 취소");
 
-        int choice = scanner.nextInt();
+        int choice = getValidInput();
         if (choice == 1) {
             cart.addItem(menuItem);
             System.out.println(menuItem.getName() + " 이(가) 장바구니에 추가되었습니다.");
             System.out.println("--------------------------------");
-        } else {
+        } else if (choice == 2) {
             System.out.println(menuItem.getName() + " 이(가) 취소되었습니다.");
+            System.out.println("--------------------------------");
+        } else {
+            System.out.println("잘못된 선택입니다. 장바구니 추가가 취소되었습니다.");
             System.out.println("--------------------------------");
         }
     }
@@ -141,7 +165,7 @@ public class Kiosk {
         System.out.println("W " + total);
 
         System.out.println("1. 주문      2. 메뉴판");
-        int choice = scanner.nextInt();
+        int choice = getValidInput();
         if (choice == 1) {
             System.out.println("주문이 완료되었습니다.");
             System.out.println("금액은 W " + total + " 입니다.");
@@ -156,13 +180,25 @@ public class Kiosk {
 
     // 주문 취소
     private void cancelOrder() {
+        if (cart.isCartEmpty()) {
+            System.out.println("취소할 주문이 없습니다.");
+            return;
+        }
+
         System.out.println("진행중인 주문을 취소하시겠습니까?");
         System.out.println("1. 확인      2. 취소");
 
-        int choice = scanner.nextInt();
+        int choice = getValidInput();
         if (choice == 1) {
             cart.clearCart();
             System.out.println("진행중인 주문이 취소되었습니다.");
+            System.out.println("--------------------------------");
+        } else if (choice == 2) {
+            System.out.println("주문 취소가 취소되었습니다.");
+            System.out.println("--------------------------------");
+        } else {
+            System.out.println("잘못된 선택입니다.");
+            System.out.println("--------------------------------");
         }
     }
 

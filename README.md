@@ -28,7 +28,7 @@ public class MenuItem {
     private String name;
     private double price;
     private String description;
-    
+
     // 생성자, getter, setter 등
 }
 ```
@@ -40,11 +40,11 @@ public class MenuItem {
 // Kiosk 클래스를 통해 키오스크 동작 로직 분리
 public class Kiosk {
     private List<MenuItem> menuItems;
-    
+
     public void start() {
         // 키오스크 실행 로직
     }
-    
+
     // 다른 메서드들...
 }
 ```
@@ -57,7 +57,7 @@ public class Kiosk {
 public class Menu {
     private String name;  // 카테고리 이름 (예: "Burgers")
     private List<MenuItem> menuItems;
-    
+
     // 메서드들...
 }
 ```
@@ -88,19 +88,76 @@ private String formatName(String name) {
 // Cart 클래스를 통한 장바구니 관리
 public class Cart {
     private List<CartItem> items;
-    
+
     public void addItem(MenuItem menuItem) {
         // 장바구니에 아이템 추가 로직
     }
-    
+
     public double calculateTotal() {
         // 총액 계산 로직
     }
-    
+
     public void clearCart() {
         // 장바구니 비우기
     }
 }
+```
+
+### Enum을 활용한 사용자 유형별 할인율 관리
+사용자 유형(국가유공자, 군인, 학생, 일반인)에 따라 다른 할인율을 적용하기 위해 Enum을 활용했습니다. 이를 통해 추가적인 사용자 유형이 생겨도 쉽게 확장할 수 있는 구조를 만들었습니다.
+
+```java
+// UserType Enum을 통한 할인율 관리
+public enum UserType {
+    VETERAN("국가유공자", 0.1),    // 국가유공자 10% 할인
+    SOLDIER("군인", 0.05),         // 군인 5% 할인
+    STUDENT("학생", 0.03),         // 학생 3% 할인
+    GENERAL("일반인", 0.0);        // 일반인 0% 할인
+
+    private String description;
+    private double discountRate;
+
+    UserType(String description, double discountRate) {
+        this.description = description;
+        this.discountRate = discountRate;
+    }
+
+    // 할인 정보 출력 및 사용자 유형 선택 메서드
+    public static void discountInfo() {
+        System.out.println("할인 정보를 선택해주세요.");
+        int index = 1;
+        for (UserType type : values()) {
+            System.out.printf("%d. %s : %.0f%%\n", index++, type.description, type.discountRate * 100);
+        }
+    }
+}
+```
+
+### 람다와 스트림을 활용한 코드 개선
+장바구니 관리, 메뉴 출력, 가격 계산 등의 기능에 람다와 스트림을 적용하여 코드의 가독성과 효율성을 높였습니다.
+
+```java
+// 스트림을 활용한 장바구니 가격 계산
+public double calculateTotal() {
+    return cartItems.stream()
+            .mapToDouble(item -> item.getMenuItem().getPrice() * item.getQuantity())
+            .sum();
+}
+
+// 스트림을 활용한 특정 메뉴 제거
+public void removeItem(String menuName) {
+    cartItems = cartItems.stream()
+            .filter(item -> !item.getMenuItem().getName().equals(menuName))
+            .collect(Collectors.toList());
+}
+
+// 스트림을 활용한 메뉴 출력
+IntStream.range(0, menuItems.size())
+    .forEach(i -> {
+        MenuItem item = menuItems.get(i);
+        String formatName = formatName(item.getName());
+        System.out.println((i + 1) + ". " + formatName + " | W " + item.getPrice() + " | " + item.getDescription());
+    });
 ```
 
 ## 💡 주요 기능
@@ -125,6 +182,16 @@ public class Cart {
 - 장바구니 내역 확인 및 관리
 - 주문 처리 및 결제 기능
 - 장바구니 비우기 및 주문 취소 기능
+
+### 사용자 유형별 할인 시스템
+- Enum을 활용한 사용자 유형 관리(국가유공자, 군인, 학생, 일반인)
+- 각 사용자 유형별 다른 할인율 적용
+- 주문 시 사용자 유형 선택 및 할인된 가격 계산
+
+### 함수형 프로그래밍 적용
+- 람다와 스트림을 활용한 간결한 코드 작성
+- 장바구니 항목 필터링 및 가격 계산에 스트림 API 활용
+- 메뉴 출력 및 포맷팅에 함수형 프로그래밍 적용
 
 ## 🚀 시연 예시
 
@@ -181,7 +248,14 @@ W 8.9
 1. 주문      2. 메뉴판
 1
 
-주문이 완료되었습니다. 금액은 W 8.9 입니다.
+할인 정보를 선택해주세요.
+1. 국가유공자 : 10%
+2. 군인     :  5%
+3. 학생     :  3%
+4. 일반     :  0%
+3
+
+주문이 완료되었습니다. 금액은 W 8.633 입니다.
 ```
 
 ## 🔧 문제 해결 과정
@@ -212,6 +286,12 @@ if (cart.isEmpty() && (choice == 4 || choice == 5)) {
 
 또한 주문 완료 후 장바구니를 비우는 기능도 구현했습니다.
 
+### 할인율 적용 관리 문제
+처음에는 할인율을 하드코딩했으나, 확장성과 유지보수를 고려하여 Enum으로 리팩토링했습니다. 이를 통해 사용자 유형을 추가하거나 할인율을 변경할 때 코드 전체를 수정하지 않고도 Enum만 수정하면 되도록 구현했습니다.
+
+### 메서드 체이닝과 스트림을 활용한 코드 가독성 개선
+장바구니 항목 계산이나 필터링 로직이 복잡해지면서 for 루프와 if 문이 중첩되어 코드 가독성이 떨어지는 문제가 있었습니다. 이를 스트림과 람다 표현식을 활용하여 간결하고 읽기 쉬운 코드로 개선했습니다.
+
 ## 📂 프로젝트 구조
 
 프로젝트는 기능별로 패키지를 나누어 단계별로 진행했습니다:
@@ -223,7 +303,8 @@ src/com/example/kiosk/
 ├── level3/ - Kiosk 클래스로 책임 분리
 ├── level4/ - 계층적 메뉴 구조 추가
 ├── level5/ - 캡슐화 강화 및 코드 구조 개선
-└── level6/ - 장바구니 및 주문 시스템 구현
+├── level6/ - 장바구니 및 주문 시스템 구현
+└── level7/ - Enum, 람다 & 스트림을 활용한 주문 및 장바구니 관리
 ```
 
 ## 🔄 개발 레벨 변화
@@ -234,17 +315,11 @@ src/com/example/kiosk/
 - **Level 4**: 카테고리 별 메뉴 구조 구현
 - **Level 5**: 접근 제어자와 getter/setter 적용해 캡슐화 강화
 - **Level 6**: 장바구니 기능 추가 및 주문 프로세스 구현
+- **Level 7**: Enum을 활용한 사용자 유형별 할인율 관리, 람다와 스트림을 활용한 코드 개선
 
 ## 💻 실행 방법
 
 1. 프로젝트를 클론합니다.
 2. IDE에서 프로젝트를 엽니다.
-3. `src/com/example/kiosk/level6/Main.java` 파일을 실행합니다.
+3. `src/com/example/kiosk/level7/Main.java` 파일을 실행합니다.
 4. 콘솔 창에서 키오스크를 조작합니다.
-
-## 🔮 향후 개발 계획
-
-- 결제 시스템 연동
-- 회원 관리 기능 추가
-- 주문 내역 저장 및 조회 기능
-- GUI 인터페이스 구현

@@ -28,7 +28,7 @@ public class MenuItem {
     private String name;
     private double price;
     private String description;
-
+    
     // 생성자, getter, setter 등
 }
 ```
@@ -40,11 +40,11 @@ public class MenuItem {
 // Kiosk 클래스를 통해 키오스크 동작 로직 분리
 public class Kiosk {
     private List<MenuItem> menuItems;
-
+    
     public void start() {
         // 키오스크 실행 로직
     }
-
+    
     // 다른 메서드들...
 }
 ```
@@ -57,7 +57,7 @@ public class Kiosk {
 public class Menu {
     private String name;  // 카테고리 이름 (예: "Burgers")
     private List<MenuItem> menuItems;
-
+    
     // 메서드들...
 }
 ```
@@ -323,3 +323,4 @@ src/com/example/kiosk/
 2. IDE에서 프로젝트를 엽니다.
 3. `src/com/example/kiosk/level7/Main.java` 파일을 실행합니다.
 4. 콘솔 창에서 키오스크를 조작합니다.
+

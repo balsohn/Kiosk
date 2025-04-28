@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 public class Kiosk {
 
@@ -107,11 +108,15 @@ public class Kiosk {
         System.out.println("[ " + menu.getName().toUpperCase() +" MENU ]");
         List<MenuItem> menuItems = menu.getMenuItems();
 
-        for (int i = 0; i < menuItems.size(); i++) {
-            MenuItem item = menuItems.get(i);
-            String formatName = formatName(item.getName());
-            System.out.println((i + 1) + ". " + formatName + " | W " + item.getPrice() + " | " + item.getDescription());
-        }
+        // 스트림을 사용하여 메뉴 아이템 출력
+        IntStream.range(0, menuItems.size())
+                        .forEach(i -> {
+                            MenuItem item = menuItems.get(i);
+                            String formatName = formatName(item.getName());
+                            System.out.println((i + 1) + ". " + formatName + " | W " + item.getPrice() + " | " + item.getDescription());
+                        });
+
+
         System.out.println("0. 뒤로가기");
         System.out.print("메뉴를 선택하세요: ");
 
@@ -179,6 +184,8 @@ public class Kiosk {
             System.out.println("주문이 완료되었습니다.");
             System.out.println("금액은 W " + discoutedTotal + " 입니다.");
             System.out.println("--------------------------------");
+
+            cart.clearCart();
         } else if (orderChoice == 2) {
             System.out.println("메뉴판으로 돌아갑니다.");
             System.out.println("--------------------------------");

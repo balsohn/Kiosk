@@ -1,5 +1,8 @@
 package com.example.kiosk.level7;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -168,8 +171,9 @@ public class Kiosk {
                 });
 
         double total = cart.calculateTotal();
+
         System.out.println("[ Total ]");
-        System.out.println("W " + total);
+        System.out.printf("W %.2f\n", total);
 
         System.out.println("1. 주문       2. 메뉴판");
         int orderChoice = getValidInput();
